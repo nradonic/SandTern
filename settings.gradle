@@ -1,0 +1,3 @@
+rootProject.name = 'Sand_Tern'
+include 'SandBox'
+
