@@ -37,19 +37,22 @@ public class StuffBlock
 
     public enum Material
     {
-        EMPTY(Color.GRAY, 0.0, Integer.MAX_VALUE),
-        SAND(Color.yellow, 2.0, 1),
-        FIXEDCELL(Color.BLACK, 0.0, Integer.MAX_VALUE);
+        EMPTY(Color.GRAY, 0.0, Integer.MAX_VALUE, Integer.MAX_VALUE),
+        SAND(Color.yellow, 2.0, 1, 1),
+        WATER(Color.blue, 1.0, 1, Integer.MAX_VALUE),
+        FIXEDCELL(Color.BLACK, 0.0, Integer.MAX_VALUE, Integer.MAX_VALUE);
 
         private final Color blockColor;
         private final double density;
         private final int stackingLimit;
+        private final int lateralBlockThreshold;
 
-        Material(Color blockColor, double density, int stackingLimit)
+        Material(Color blockColor, double density, int stackingLimit, int lateralBlockThreshold)
         {
             this.blockColor = blockColor;
             this.density = density;
             this.stackingLimit = stackingLimit;
+            this.lateralBlockThreshold = lateralBlockThreshold;
         }
 
         public Color getBlockColor()
@@ -65,6 +68,11 @@ public class StuffBlock
         public int getStackingLimit()
         {
             return this.stackingLimit;
+        }
+
+        public int getLateralBlockThreshold()
+        {
+            return this.lateralBlockThreshold;
         }
     }
 

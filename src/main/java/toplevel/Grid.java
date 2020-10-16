@@ -11,7 +11,7 @@ public class Grid extends JPanel
 
     StuffBlock[][] grid;
     final int jpanelBorder = 3;
-    final int cellBorder = 1;
+    final int cellBorder = 0;
     final int padded_window = 1000 + 2 * jpanelBorder;
     double cellWidth;
     double cellHeight;
@@ -21,7 +21,12 @@ public class Grid extends JPanel
         this.rows = rows;
         this.columns = columns;
         grid = new StuffBlock[columns][rows];
-        fillGrid();
+        emptyGrid();
+        setupJPanel();
+    }
+
+    private void setupJPanel()
+    {
         this.setLayout(new BorderLayout());
         Border s = BorderFactory.createLineBorder(Color.GREEN, jpanelBorder);
         this.setBorder(s);
@@ -30,7 +35,7 @@ public class Grid extends JPanel
         recalculateDimensions();
     }
 
-    private void fillGrid()
+    private void emptyGrid()
     {
         for (int row = 0; row < rows; row++)
         {
