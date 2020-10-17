@@ -86,6 +86,20 @@ public class AdvanceCell
         {
             flowAndDropCells(grid, row, column, flowLeft, lateralBlocksLeft, flowRight, lateralBlocksRight);
         }
+        if (StuffBlock.Material.WATER == grid.cell(row, column).material() &&
+                stackingHeight >= grid.cell(row, column).material().getStackingLimit() &&
+                (!flowLeft && !flowRight))
+        {
+            swapBottomWaterCell(grid, row, column);
+        }
+    }
+
+    private static void swapBottomWaterCell(Grid grid, int row, int column) throws Exception
+    {
+        StuffBlock stuffBlockTop = grid.cell(row - 1, column).clone();
+        StuffBlock stuffBlockBottom = grid.cell(row, column).clone();
+        grid.injectCell(row, column, stuffBlockTop);
+        grid.injectCell(row - 1, column, stuffBlockBottom);
     }
 
     private static void flowAndDropCells(Grid grid, int row, int column, boolean flowLeft, int lateralBlocksLeft,
@@ -98,26 +112,33 @@ public class AdvanceCell
         if (localLeft && localRight)
         {
             int k = new Random().nextInt(2);
-            if (k==0){
+            if (k == 0)
+            {
                 localLeft = false;
             }
             localRight = !localLeft;
         }
         if (localLeft && !localRight)
         {
-            StuffBlock stuffBlock = grid.cell(row-1, column).clone();
-            grid.injectCell(row, lateralBlocksLeft, stuffBlock);
-            grid.injectCell(row - 1, column, new StuffBlock(StuffBlock.Material.EMPTY));
+            flowAndEmpty(grid, row, column, lateralBlocksLeft);
             return;
         }
         if (!localLeft && localRight)
         {
-            StuffBlock stuffBlock = grid.cell(row-1, column).clone();
-            grid.injectCell(row, lateralBlocksRight, stuffBlock);
-            grid.injectCell(row - 1, column, new StuffBlock(StuffBlock.Material.EMPTY));
+            flowAndEmpty(grid, row, column, lateralBlocksRight);
             return;
         }
+    }
 
+    private static void flowAndEmpty(Grid grid, int row, int column, int targetColumn) throws Exception
+    {
+        StuffBlock stuffBlock = grid.cell(row, column).clone();
+        grid.injectCell(row, targetColumn, stuffBlock);
+        stuffBlock = grid.cell(row - 1, column).clone();
+        grid.injectCell(row, column, stuffBlock);
+
+        grid.injectCell(row - 1, column, new StuffBlock(StuffBlock.Material.EMPTY));
+        return;
     }
 
     private static int countBlocking(Grid grid, int row, int column, Direction direction) throws Exception
@@ -177,7 +198,9 @@ public class AdvanceCell
         int result = 0;
         StuffBlock.Material material = grid.cell(row, column).material();
 
-        while (k >= 0 && grid.cell(k, column).material() == material)
+        while (k >= 0 &&
+                (grid.cell(k, column).material() == StuffBlock.Material.SAND ||
+                        grid.cell(k, column).material() == StuffBlock.Material.WATER))
         {
             result += 1;
             k--;

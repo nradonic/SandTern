@@ -10,9 +10,9 @@ public class TopLevel
 
     static Aquarium aquarium;
     static Grid grid;
-    final static long generationTime = 100;
+    final static long generationTime = 1;
     public static int generation = 1;
-    static final int gridSize = 30;
+    static final int gridSize = 300;
     static int injectionColumn = 0;
     static int injectionRow = 0;
     static Random random = new Random();
@@ -33,8 +33,9 @@ public class TopLevel
             TimeUnit.MILLISECONDS.sleep(generationTime);
             if (OneCycle.moveCells(grid, injectionColumn) && generation % 5 == 0)
             {
-                StuffBlock stuffBlock = new StuffBlock(StuffBlock.Material.WATER);
-                int k = gridSize / 2;
+
+                StuffBlock stuffBlock = nextInjectionSource();
+                int k = random.nextInt(gridSize);
                 injectCells(grid, injectionRow, k, stuffBlock);
             }
             aquarium.repaint();
@@ -42,6 +43,16 @@ public class TopLevel
             generation++;
             System.out.println("Generation: " + generation);
         } while (spaceToDrop);
+    }
+
+    private static StuffBlock nextInjectionSource()
+    {
+        StuffBlock stuffBlock = new StuffBlock(StuffBlock.Material.WATER);
+        if (random.nextInt(2) == 0)
+        {
+            stuffBlock = new StuffBlock(StuffBlock.Material.SAND);
+        }
+        return stuffBlock;
     }
 
     private static void injectCells(Grid grid, int injectionRow, int injectionColumn, StuffBlock stuffBlock) throws Exception
@@ -61,6 +72,9 @@ public class TopLevel
         {
             injectCells(grid, row, injectionColumn + i, stuffBlock);
         }
+        injectCells(grid, row - 1, (int) (injectionColumn - 0.25 * gridSize), stuffBlock);
+        injectCells(grid, row - 1, (int) (injectionColumn + 0.25 * gridSize), stuffBlock);
+
 
 //        stuffBlock = new StuffBlock(StuffBlock.Material.WATER);
 //        injectCells(grid, row-1, injectionColumn - 1, stuffBlock);
